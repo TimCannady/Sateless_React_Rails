@@ -1,38 +1,30 @@
 var React = require('react');
 var BlabsList = require('./List.jsx');
-var BlabsForm = require('./Form.jsx');
 
 module.exports = React.createClass({
-  getInitialState: function() {
+  getInitialState: function(){
     return {data: []};
   },
-  componentDidMount: function() {
-    this.readBlabsFromAPI();
+  componentDidMount: function(){
+    this.readBlabsFromAPI()
   },
-  readBlabsFromAPI: function() {
-    this.props.readFromAPI(this.props.origin + '/blabs', function(blabs) {
+
+  readBlabsFromAPI: function(){
+    //readFromAPI takes two args: url, successFunction
+    //below, the first arg is basically saying to go to either localhost:3030/blabs OR localhost:8080/blabs depending on the production environment
+    //this is beacuse this.props.orgin determines which server prefix to use (3030 vs 8000) 
+    this.props.readFromAPI(this.props.origin + '/blabs', function(blabs){
+      //the successFunction uses Reqwest to hand back what was fetched from the server. In this case, all the blabs. Not sure if they're in an array or object. 
       this.setState({data: blabs});
-    }.bind(this));
+    }.bind(this))
   },
-  writeBlabToAPI: function(data) {
-    this.props.writeToAPI('post', this.props.origin + '/blabs', data, function(blab) {
-      var blabs = this.state.data;
-      blabs.shift();
-      blabs.unshift(blab);
-      this.setState({data: blabs});
-    }.bind(this));
-  },
-  optimisticUpdate: function(blab) {
-    var blabs = this.state.data;
-    blabs.unshift(blab);
-    this.setState({data: blabs});
-  },
-  render: function() {
-    return (
+
+  render: function(){
+    return(
       <div className="blabs-view">
-        <BlabsForm writeBlabToAPI={this.writeBlabToAPI} optimisticUpdate={this.optimisticUpdate} currentUser={this.props.currentUser} signedIn={this.props.signedIn} />
-        <BlabsList data={this.state.data} />
+        <BlabsList data={this.state.data}/>
       </div>
-    );
+    )
   }
-});
+})
+
